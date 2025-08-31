@@ -2,19 +2,37 @@ using UnityEngine;
 
 public class BallMovement : MonoBehaviour
 {
+    public float timer = 0f;
+    public float x = 0f;
+    public float prevtransform, nowtransform;
     Rigidbody2D rb;
     public float speed = 5f;
 
     void Start()
     {
+        nowtransform = gameObject.transform.position.y;
+        prevtransform = nowtransform;
         rb = GetComponent<Rigidbody2D>();
         rb.linearVelocity = new Vector2(2f, 5f).normalized * speed;
     }
 
     void Update()
     {
-        // фиксируем модуль скорости, чтобы шар не ускорялся/не замедлялся
-        rb.linearVelocity = rb.linearVelocity.normalized * speed;
+     rb.linearVelocity = rb.linearVelocity.normalized * speed;
+        if (prevtransform == 4.926393f && nowtransform == 4.833545f || prevtransform == 4.833545f && nowtransform == 4.833545f)
+        {
+            x++;
+        } else {
+            x = 0;
+        }
+        prevtransform = nowtransform;
+        nowtransform = (int)transform.position.y;
+        timer += Time.deltaTime;
+        if(x == 30 && timer <= 0.1f) {
+            gameObject.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 3);
+            x = 0;
+            timer = 0;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)

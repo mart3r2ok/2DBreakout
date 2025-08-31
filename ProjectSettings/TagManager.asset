@@ -9,6 +9,7 @@ TagManager:
   - Wall
   - Ceiling
   - Paddle
+  - Ball
   layers:
   - Default
   - TransparentFX

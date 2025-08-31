@@ -64,6 +64,8 @@
     <Compile Include="Assets\Startbut.cs" />
     <Compile Include="Assets\PlatformMove.cs" />
     <Compile Include="Assets\BallMovement.cs" />
+    <Compile Include="Assets\DefaultBlock.cs" />
+    <Compile Include="Assets\GameManager.cs" />
     <Compile Include="Assets\NewGameScr.cs" />
     <Compile Include="Assets\iscol.cs" />
   </ItemGroup>
