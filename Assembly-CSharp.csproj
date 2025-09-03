@@ -61,13 +61,16 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.55f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AgainScript.cs" />
     <Compile Include="Assets\Startbut.cs" />
     <Compile Include="Assets\PlatformMove.cs" />
+    <Compile Include="Assets\Menu.cs" />
     <Compile Include="Assets\BallMovement.cs" />
     <Compile Include="Assets\DefaultBlock.cs" />
     <Compile Include="Assets\GameManager.cs" />
+    <Compile Include="Assets\Balldisap.cs" />
     <Compile Include="Assets\NewGameScr.cs" />
-    <Compile Include="Assets\iscol.cs" />
+    <Compile Include="Assets\NextLevel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

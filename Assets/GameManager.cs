@@ -2,20 +2,34 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public float balls = 1f;
+    public float countBlocks = 0f;
+    public GameObject Panellose;
+    public GameObject Panelwin;
+    public PlatformMove platformMove;
+    public BallMovement ballMovement;
     void Start()
     {
-        
+        platformMove = GameObject.FindGameObjectWithTag("Paddle").GetComponent<PlatformMove>();
+        ballMovement = GameObject.FindGameObjectWithTag("Ball").GetComponent<BallMovement>();
     }
 
     void Update()
     {
         
     }
-    public void check(int countBlocks)
+    public void check()
     {
-        if (countBlocks == 36)
+        if(balls == 0)
         {
-            Debug.Log("You win!");
+            platformMove.enabled = false;
+            Panellose.SetActive(true);
+        }
+        if (countBlocks == 3)
+        {
+            ballMovement.enabled = false;
+            platformMove.enabled = false;
+            Panelwin.SetActive(true);
         }
     }
 }

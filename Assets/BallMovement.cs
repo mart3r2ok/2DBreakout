@@ -2,63 +2,48 @@ using UnityEngine;
 
 public class BallMovement : MonoBehaviour
 {
-    public float timer = 0f;
-    public float x = 0f;
-    public float prevtransform, nowtransform;
-    Rigidbody2D rb;
-    public float speed = 5f;
+    public float speed = 8f;        // постоянная скорость
+    public float randomFactor = 0.05f; // немного рандома для разнообразия
+
+    private Rigidbody2D rb;
 
     void Start()
     {
-        nowtransform = gameObject.transform.position.y;
-        prevtransform = nowtransform;
         rb = GetComponent<Rigidbody2D>();
-        rb.linearVelocity = new Vector2(2f, 5f).normalized * speed;
+        LaunchBall(Vector2.up); // старт вверх
     }
 
-    void Update()
+    void LaunchBall(Vector2 direction)
     {
-     rb.linearVelocity = rb.linearVelocity.normalized * speed;
-        if (prevtransform == 4.926393f && nowtransform == 4.833545f || prevtransform == 4.833545f && nowtransform == 4.833545f)
-        {
-            x++;
-        } else {
-            x = 0;
-        }
-        prevtransform = nowtransform;
-        nowtransform = (int)transform.position.y;
-        timer += Time.deltaTime;
-        if(x == 30 && timer <= 0.1f) {
-            gameObject.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y - 3);
-            x = 0;
-            timer = 0;
-        }
+        rb.linearVelocity = Vector2.zero; // останавливаем мяч
+        rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        // удар об платформу
         if (collision.gameObject.CompareTag("Paddle"))
         {
-            // удар об платформу ? меняем угол в зависимости от точки касания
-            float x = HitFactor(transform.position, collision.transform.position, collision.collider.bounds.size.x);
-            Vector2 dir = new Vector2(x, 1).normalized;
-            rb.linearVelocity = dir * speed;
-        }
-        else if (collision.gameObject.CompareTag("Wall"))
-        {
-            // удар об боковые стены ? отражение по X
-            rb.linearVelocity = new Vector2(-rb.linearVelocity.x, rb.linearVelocity.y);
-        }
-        else if (collision.gameObject.CompareTag("Ceiling"))
-        {
-            // удар об потолок ? отражение по Y
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -rb.linearVelocity.y);
-        }
-    }
+            float paddleWidth = collision.collider.bounds.size.x;
+            float hitPos = (transform.position.x - collision.transform.position.x) / (paddleWidth / 2);
 
-    float HitFactor(Vector2 ballPos, Vector2 paddlePos, float paddleWidth)
-    {
-        // возвращает -1 (лево) ... 0 (центр) ... 1 (право)
-        return (ballPos.x - paddlePos.x) / paddleWidth;
+            // направление зависит от точки удара (X = смещение, Y = вверх)
+            Vector2 newDir = new Vector2(hitPos, 1f);
+
+            // добавляем рандом, чтобы не зациклился
+            newDir.x += Random.Range(-randomFactor, randomFactor);
+
+            LaunchBall(newDir);
+        }
+        else
+        {
+            // удар об стены и блоки — обычное отражение
+            Vector2 reflectDir = Vector2.Reflect(rb.linearVelocity.normalized, collision.contacts[0].normal);
+
+            // рандом для разнообразия
+            reflectDir.x += Random.Range(-randomFactor, randomFactor);
+
+            LaunchBall(reflectDir);
+        }
     }
 }

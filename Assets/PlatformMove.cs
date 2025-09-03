@@ -13,7 +13,6 @@ public class PlatformMove : MonoBehaviour
             direction = -1;
         if (Input.GetKeyDown(KeyCode.RightArrow))
             direction = 1;
-
         float newX = transform.position.x + direction * speed * Time.deltaTime;
         newX = Mathf.Clamp(newX, -10.303f, 10.303f);
         transform.position = new Vector3(newX, transform.position.y, transform.position.z);
