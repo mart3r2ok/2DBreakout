@@ -10,6 +10,7 @@ TagManager:
   - Ceiling
   - Paddle
   - Ball
+  - PB
   layers:
   - Default
   - TransparentFX
