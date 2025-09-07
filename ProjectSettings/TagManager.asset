@@ -11,6 +11,7 @@ TagManager:
   - Paddle
   - Ball
   - PB
+  - PBU
   layers:
   - Default
   - TransparentFX

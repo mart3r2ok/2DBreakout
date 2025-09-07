@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
             platformMove.enabled = false;
             Panellose.SetActive(true);
         }
-        if (countBlocks == 3)
+        if (countBlocks == 126)
         {
             ballMovement.enabled = false;
             platformMove.enabled = false;
