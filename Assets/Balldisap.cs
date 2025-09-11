@@ -13,7 +13,6 @@ public class Balldisap : MonoBehaviour
             Debug.Log("Ёто шарик, удал€ю...");
             platf.Destroy2(collision.gameObject);
             gameManager.balls--;
-            gameManager.check();
         }
     }
 }

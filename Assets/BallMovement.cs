@@ -1,49 +1,100 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class BallMovement : MonoBehaviour
 {
-    public float speed = 8f;        // постоянная скорость
-    public float randomFactor = 0.05f; // немного рандома для разнообразия
+    public float speed = 8f;
+    public float randomFactor = 0.05f;
+    public float minXAngle = 0.3f; // РјРёРЅРёРјР°Р»СЊРЅР°СЏ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅР°СЏ СЃРѕСЃС‚Р°РІР»СЏСЋС‰Р°СЏ
+    public float minYAngle = 0.3f; // РјРёРЅРёРјР°Р»СЊРЅР°СЏ РІРµСЂС‚РёРєР°Р»СЊРЅР°СЏ СЃРѕСЃС‚Р°РІР»СЏСЋС‰Р°СЏ
+    public float maxYAngle = 0.95f; // РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РІРµСЂС‚РёРєР°Р»СЊРЅР°СЏ СЃРѕСЃС‚Р°РІР»СЏСЋС‰Р°СЏ
 
     private Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        LaunchBall(Vector2.up); // старт вверх
-    }
 
-    void LaunchBall(Vector2 direction)
-    {
-        rb.linearVelocity = Vector2.zero; // останавливаем мяч
-        rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
+        if (rb == null)
+        {
+            Debug.LogError("вќЊ Rigidbody2D РЅРµ РЅР°Р№РґРµРЅ РЅР° РѕР±СЉРµРєС‚Рµ СЃ BallMovement!");
+            return;
+        }
+
+        rb.gravityScale = 0f;
+        rb.drag = 0f;
+        rb.angularDrag = 0f;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        // Р—Р°РїСѓСЃРєР°РµРј С€Р°СЂ РІРІРµСЂС…
+        rb.velocity = Vector2.up * speed;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // удар об платформу
+        if (rb == null) return;
+
+        // РћС‚СЃРєРѕРє РѕС‚ РїР»Р°С‚С„РѕСЂРјС‹
         if (collision.gameObject.CompareTag("Paddle"))
         {
             float paddleWidth = collision.collider.bounds.size.x;
             float hitPos = (transform.position.x - collision.transform.position.x) / (paddleWidth / 2);
 
-            // направление зависит от точки удара (X = смещение, Y = вверх)
             Vector2 newDir = new Vector2(hitPos, 1f);
-
-            // добавляем рандом, чтобы не зациклился
             newDir.x += Random.Range(-randomFactor, randomFactor);
 
-            LaunchBall(newDir);
+            rb.velocity = NormalizeDirection(newDir) * speed;
+        }
+        // РћС‚СЃРєРѕРє РѕС‚ Р±Р»РѕРєРѕРІ
+        else if (collision.gameObject.CompareTag("Block"))
+        {
+            if (collision.contacts != null && collision.contacts.Length > 0)
+            {
+                Vector2 reflectDir = Vector2.Reflect(rb.velocity.normalized, collision.contacts[0].normal);
+                reflectDir.x += Random.Range(-randomFactor, randomFactor);
+
+                rb.velocity = NormalizeDirection(reflectDir) * speed;
+            }
+            else
+            {
+                Debug.LogWarning("вљ пёЏ РќРµС‚ РєРѕРЅС‚Р°РєС‚РЅС‹С… С‚РѕС‡РµРє РїСЂРё СЃС‚РѕР»РєРЅРѕРІРµРЅРёРё СЃ Block: " + collision.gameObject.name);
+                // fallback: РїСЂРѕСЃС‚Рѕ РёРЅРІРµСЂС‚РёСЂСѓРµРј Y
+                rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y).normalized * speed;
+            }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (rb == null) return;
+
+        if (rb.velocity.sqrMagnitude < 0.01f)
+        {
+            // Р•СЃР»Рё СЃРєРѕСЂРѕСЃС‚СЊ РїРѕС‡С‚Рё РЅСѓР»РµРІР°СЏ вЂ” С‚РѕР»РєР°РµРј С€Р°СЂ РІРІРµСЂС… СЃ РЅРµР±РѕР»СЊС€РёРј РѕС‚РєР»РѕРЅРµРЅРёРµРј
+            Vector2 fallbackDir = new Vector2(Random.Range(-0.5f, 0.5f), 1f);
+            rb.velocity = NormalizeDirection(fallbackDir) * speed;
         }
         else
         {
-            // удар об стены и блоки — обычное отражение
-            Vector2 reflectDir = Vector2.Reflect(rb.linearVelocity.normalized, collision.contacts[0].normal);
-
-            // рандом для разнообразия
-            reflectDir.x += Random.Range(-randomFactor, randomFactor);
-
-            LaunchBall(reflectDir);
+            rb.velocity = rb.velocity.normalized * speed;
         }
+    }
+
+    /// <summary>
+    /// РќРѕСЂРјР°Р»РёР·Р°С†РёСЏ РЅР°РїСЂР°РІР»РµРЅРёСЏ + РѕРіСЂР°РЅРёС‡РµРЅРёРµ СѓРіР»РѕРІ
+    /// </summary>
+    Vector2 NormalizeDirection(Vector2 dir)
+    {
+        dir = dir.normalized;
+
+        // РјРёРЅРёРјР°Р»СЊРЅР°СЏ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅР°СЏ СЃРѕСЃС‚Р°РІР»СЏСЋС‰Р°СЏ
+        if (Mathf.Abs(dir.x) < minXAngle)
+            dir.x = minXAngle * Mathf.Sign(dir.x == 0 ? 1 : dir.x);
+
+        // РѕРіСЂР°РЅРёС‡РµРЅРёРµ РІРµСЂС‚РёРєР°Р»СЊРЅРѕР№ СЃРѕСЃС‚Р°РІР»СЏСЋС‰РµР№
+        float signY = Mathf.Sign(dir.y);
+        dir.y = Mathf.Clamp(Mathf.Abs(dir.y), minYAngle, maxYAngle) * signY;
+
+        return dir.normalized;
     }
 }

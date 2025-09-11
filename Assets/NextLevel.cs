@@ -4,6 +4,9 @@ public class NextLevel : MonoBehaviour
 {
     public void LoadNextLevel()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1);
+        int k = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        int nextScene = (k == 1) ? k + 1 : 0;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(nextScene);
     }
 }

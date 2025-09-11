@@ -12,6 +12,8 @@ TagManager:
   - Ball
   - PB
   - PBU
+  - Undefined
+  - Block
   layers:
   - Default
   - TransparentFX

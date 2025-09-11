@@ -52,8 +52,16 @@ public class PlatformMove : MonoBehaviour
 
             foreach (var pos in newPositions)
             {
-                GameObject ball = Instantiate(prefabBall, pos, Quaternion.identity);
-                spawnedBlocks.Add(ball);
+                if (gameManager.balls <= 150)
+                {
+                    if(pos.x < -10.935f) continue;
+                    if(pos.x > 10.935f) continue;
+                    if(spawnedBlocks.Count >= 150) break;
+                    if(pos.y > 5f) continue;
+                    if(pos.y < -5f) continue;
+                    GameObject ball = Instantiate(prefabBall, pos, Quaternion.identity);
+                    spawnedBlocks.Add(ball);
+                }
             }
         }
     }
@@ -62,8 +70,9 @@ public class PlatformMove : MonoBehaviour
     {
         Vector3 leftPos = new Vector3(center.x - xOffset, center.y + yOffset, center.z);
         Vector3 rightPos = new Vector3(center.x + xOffset, center.y + yOffset, center.z);
-
+        if(leftPos.x < -10.935f) leftPos.x = -10.935f;
         GameObject ballLeft = Instantiate(prefabBall, leftPos, Quaternion.identity);
+        if(rightPos.x > 10.935f) rightPos.x = 10.935f;
         GameObject ballRight = Instantiate(prefabBall, rightPos, Quaternion.identity);
 
         spawnedBlocks.Add(ballLeft);
