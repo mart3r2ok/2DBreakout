@@ -5,13 +5,16 @@ public class NewGameScr : MonoBehaviour
     public GameObject menu;
     public GameObject Levelmenu;
     public GameObject BB;
-    public void PlayGame()
+       public void NewGame()
     {
-        SceneManager.LoadScene("Level1");
+        PlayerPrefs.SetInt("SavedLevel", 1); 
+        PlayerPrefs.Save();
+        SceneManager.LoadScene(1);
     }
-    public void LoadGame()
+    public void ContinueGame()
     {
-        SceneManager.LoadScene("LoadGame");
+        int savedLevel = PlayerPrefs.GetInt("SavedLevel", 1);
+        SceneManager.LoadScene(savedLevel);
     }
     public void Levels()
     {
@@ -36,9 +39,5 @@ public class NewGameScr : MonoBehaviour
     public void Level2()
     {
         SceneManager.LoadScene("Level2");
-    }
-    public void Level3()
-    {
-        SceneManager.LoadScene("Level3");
     }
 }
