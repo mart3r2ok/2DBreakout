@@ -34,14 +34,14 @@ public class PlatformMove : MonoBehaviour
         {
             SpawnBallsAround(other.transform.position, 2f, 1f);
             Destroy(other.gameObject);
-            gameManager.balls += 2;
+            if (spawnedBlocks.Count < 60)
+                gameManager.balls += 2;
         }
         else if (other.CompareTag("PBU"))
         {
             Destroy(other.gameObject);
-            gameManager.balls *= 3;
-
-            // Сначала собираем все позиции, потом создаём шары
+            if (spawnedBlocks.Count < 60)
+                gameManager.balls *= 3;
             List<Vector3> newPositions = new List<Vector3>();
             foreach (var block in spawnedBlocks)
             {
@@ -52,11 +52,11 @@ public class PlatformMove : MonoBehaviour
 
             foreach (var pos in newPositions)
             {
-                if (gameManager.balls <= 150)
+                if (gameManager.balls <= 60)
                 {
                     if(pos.x < -10.935f) continue;
                     if(pos.x > 10.935f) continue;
-                    if(spawnedBlocks.Count >= 150) break;
+                    if(spawnedBlocks.Count >= 60) break;
                     if(pos.y > 5f) continue;
                     if(pos.y < -5f) continue;
                     GameObject ball = Instantiate(prefabBall, pos, Quaternion.identity);
@@ -68,6 +68,8 @@ public class PlatformMove : MonoBehaviour
 
     private void SpawnBallsAround(Vector3 center, float xOffset, float yOffset)
     {
+        if (spawnedBlocks.Count > 60)
+            return;
         Vector3 leftPos = new Vector3(center.x - xOffset, center.y + yOffset, center.z);
         Vector3 rightPos = new Vector3(center.x + xOffset, center.y + yOffset, center.z);
         if(leftPos.x < -10.935f) leftPos.x = -10.935f;

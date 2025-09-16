@@ -134,6 +134,7 @@ MonoBehaviour:
   minXAngle: 0.3
   minYAngle: 0.3
   maxYAngle: 0.95
+  bounceSound: {fileID: 0}
 --- !u!58 &1646911948723038779
 CircleCollider2D:
   m_ObjectHideFlags: 0

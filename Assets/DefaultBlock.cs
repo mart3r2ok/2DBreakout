@@ -51,7 +51,7 @@ public class DefaultBlock : MonoBehaviour
     private IEnumerator DestroyBlockDelayed()
     {
         yield return new WaitForSeconds(0.1f);
-        Destroy(gameObject);
         gameManager.countBlocks++;
+        Destroy(gameObject);
     }
 }

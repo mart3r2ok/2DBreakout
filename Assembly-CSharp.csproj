@@ -67,6 +67,7 @@
     <Compile Include="Assets\Menu.cs" />
     <Compile Include="Assets\BallMovement.cs" />
     <Compile Include="Assets\DefaultBlock.cs" />
+    <Compile Include="Assets\fixxx.cs" />
     <Compile Include="Assets\GameManager.cs" />
     <Compile Include="Assets\Balldisap.cs" />
     <Compile Include="Assets\NewGameScr.cs" />
