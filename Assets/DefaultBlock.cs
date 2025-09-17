@@ -44,6 +44,7 @@ public class DefaultBlock : MonoBehaviour
             }
 
             // запускаем корутину с задержкой
+            gameManager.countBlocks++;
             StartCoroutine(DestroyBlockDelayed());
         }
     }
@@ -51,7 +52,6 @@ public class DefaultBlock : MonoBehaviour
     private IEnumerator DestroyBlockDelayed()
     {
         yield return new WaitForSeconds(0.1f);
-        gameManager.countBlocks++;
         Destroy(gameObject);
     }
 }

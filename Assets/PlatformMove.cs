@@ -32,35 +32,32 @@ public class PlatformMove : MonoBehaviour
     {
         if (other.CompareTag("PB"))
         {
-            SpawnBallsAround(other.transform.position, 2f, 1f);
+            if (spawnedBlocks.Count < 30)
+                SpawnBallsAround(other.transform.position, 2f, 1f);
             Destroy(other.gameObject);
-            if (spawnedBlocks.Count < 60)
-                gameManager.balls += 2;
         }
         else if (other.CompareTag("PBU"))
         {
             Destroy(other.gameObject);
-            if (spawnedBlocks.Count < 60)
-                gameManager.balls *= 3;
-            List<Vector3> newPositions = new List<Vector3>();
-            foreach (var block in spawnedBlocks)
+            if (spawnedBlocks.Count < 30)
             {
-                Vector3 pos = block.transform.position;
-                newPositions.Add(pos + Vector3.left * 2f);
-                newPositions.Add(pos + Vector3.right * 2f);
-            }
-
-            foreach (var pos in newPositions)
-            {
-                if (gameManager.balls <= 60)
+                List<Vector3> newPositions = new List<Vector3>();
+                foreach (var block in spawnedBlocks)
                 {
-                    if(pos.x < -10.935f) continue;
-                    if(pos.x > 10.935f) continue;
-                    if(spawnedBlocks.Count >= 60) break;
-                    if(pos.y > 5f) continue;
-                    if(pos.y < -5f) continue;
-                    GameObject ball = Instantiate(prefabBall, pos, Quaternion.identity);
-                    spawnedBlocks.Add(ball);
+                    Vector3 pos = block.transform.position;
+                    newPositions.Add(pos + Vector3.left * 2f);
+                    newPositions.Add(pos + Vector3.right * 2f);
+                }
+
+                foreach (var pos in newPositions)
+                {
+                        if (pos.x < -10.935f) continue;
+                        if (pos.x > 10.935f) continue;
+                        if (pos.y > 5f) continue;
+                        if (pos.y < -5f) continue;
+                        gameManager.balls += 1;
+                        GameObject ball = Instantiate(prefabBall, pos, Quaternion.identity);
+                        spawnedBlocks.Add(ball);
                 }
             }
         }
@@ -68,15 +65,14 @@ public class PlatformMove : MonoBehaviour
 
     private void SpawnBallsAround(Vector3 center, float xOffset, float yOffset)
     {
-        if (spawnedBlocks.Count > 60)
-            return;
         Vector3 leftPos = new Vector3(center.x - xOffset, center.y + yOffset, center.z);
         Vector3 rightPos = new Vector3(center.x + xOffset, center.y + yOffset, center.z);
         if(leftPos.x < -10.935f) leftPos.x = -10.935f;
         GameObject ballLeft = Instantiate(prefabBall, leftPos, Quaternion.identity);
-        if(rightPos.x > 10.935f) rightPos.x = 10.935f;
+        gameManager.balls += 1;
+        if (rightPos.x > 10.935f) rightPos.x = 10.935f;
         GameObject ballRight = Instantiate(prefabBall, rightPos, Quaternion.identity);
-
+        gameManager.balls += 1;
         spawnedBlocks.Add(ballLeft);
         spawnedBlocks.Add(ballRight);
     }
